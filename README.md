@@ -37,23 +37,23 @@ FlyingQuiz/
 
 ```javascript
 const CONFIG = {
-    gameDuration: 30000,      // Длительность раунда (мс)
-    maxWordsOnScreen: 20,    // Макс. слов на экране
-    wordSpeed: 4,            // Скорость слов
-    wordSpeedVar: 3,         // Вариация скорости
-    spawnInterval: 500,      // Интервал появления слов (мс)
-    pointsCorrect: 100,      // Очки за правильный ответ
-    pointsWrong: -10,        // Очки за неправильный
-    timeBonus: 2000,         // Бонус времени (мс)
-    targetWordChance: 0.15,  // Шанс появления целевого слова
-    targetFromScreen: true,  // Брать слова с экрана
+    gameDuration: 30000, // Длительность раунда (мс)
+    maxWordsOnScreen: 20, // Макс. слов на экране
+    wordSpeed: 4, // Скорость слов
+    wordSpeedVar: 3, // Вариация скорости
+    spawnInterval: 500, // Интервал появления слов (мс)
+    pointsCorrect: 100, // Очки за правильный ответ
+    pointsWrong: -10, // Очки за неправильный
+    timeBonus: 2000, // Бонус времени (мс)
+    targetWordChance: 0.15, // Шанс появления целевого слова
+    targetFromScreen: true, // Брать слова с экрана
     ranks: [
-        { minScore: 0, title: "Новичок" },
-        { minScore: 300, title: "Ученик" },
-        { minScore: 500, title: "Студент" },
-        { minScore: 800, title: "Исследователь" },
-        { minScore: 1000, title: "Путешественник" },
-        { minScore: 1200, title: "Мастер" }
+        { minScore: 0, title: 'Новичок' },
+        { minScore: 300, title: 'Ученик' },
+        { minScore: 500, title: 'Студент' },
+        { minScore: 800, title: 'Исследователь' },
+        { minScore: 1000, title: 'Путешественник' },
+        { minScore: 1200, title: 'Мастер' }
     ]
 };
 ```
