@@ -15,8 +15,8 @@ const CONFIG = {
 
     mobile: {
         maxWordsOnScreen: 10,
-        wordSpeed: 2.5,
-        wordSpeedVar: 2,
+        wordSpeed: 2,
+        wordSpeedVar: 1,
         spawnInterval: 400,
         spawnRate: 1,
         timeBonus: 2000
