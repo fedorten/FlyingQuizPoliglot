@@ -9,7 +9,7 @@ const CONFIG = {
     pointsCorrect: 100,       // очки за правильное слово
     pointsWrong: -10,         // очки за неправильное слово
     timeBonus: 2000,          // бонус времени за угаданное слово (мс)
-    targetWordChance: 0.15,   // 15% шанс появления целевого слова
+    targetWordChance: 0.20,   // 20% шанс появления целевого слова
     targetFromScreen: true,   // выбирать целевое слово с экрана
     targetFromScreenChance: 1, // шанс выбора целевого слова с экрана
 

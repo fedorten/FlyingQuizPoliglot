@@ -2,13 +2,22 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #1a1a2e;
+    font-family: Arial, sans-serif;
 }
 
 body {
-    overflow: hidden;
-    background: #1a1a2e;
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
 }
 
 #header {
@@ -24,6 +33,7 @@ body {
     z-index: 100;
     border-bottom: 2px solid #0f3460;
     color: #fff;
+    height: 70px;
 }
 
 #header .header-item {
@@ -31,18 +41,10 @@ body {
     font-size: 22px;
 }
 
-#header .target-wrapper {
-    /* default - слева через space-between */
-}
-
 #header .timer-wrapper {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-}
-
-#header .score-wrapper {
-    /* default */
 }
 
 #target-word {
@@ -76,12 +78,13 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(26, 26, 46, 0.95);
+    background: rgba(26, 26, 46, 0.98);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 200;
+    padding: 20px;
 }
 
 #end-screen {
@@ -92,6 +95,7 @@ h1 {
     color: #e94560;
     font-size: 48px;
     margin-bottom: 20px;
+    text-align: center;
 }
 
 button {
@@ -103,10 +107,24 @@ button {
     cursor: pointer;
     border-radius: 8px;
     transition: background 0.3s;
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
 }
 
 button:hover {
     background: #ff6b6b;
+}
+
+#game-area {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: #1a1a2e;
 }
 
 .word {
@@ -120,22 +138,37 @@ button:hover {
     padding: 8px 15px;
     border-radius: 8px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-    transition: transform 0.1s;
+    pointer-events: auto;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform, left, top;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000;
+    white-space: nowrap;
+    z-index: 10;
 }
 
-.word:hover {
-    transform: scale(1.15);
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+/* Убираем hover на мобильных */
+@media (hover: hover) {
+    .word:hover {
+        transform: scale(1.15);
+        box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        z-index: 20;
+    }
 }
 
 .target {
-    background: rgba(233, 69, 96, 0.9) !important;
+    background: #e94560 !important;
+    color: #fff !important;
 }
 
 .level-selector {
     margin-bottom: 20px;
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .level-btn {
@@ -147,6 +180,9 @@ button:hover {
     border-radius: 8px;
     color: #fff;
     transition: all 0.3s;
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
 }
 
 .level-btn.active {
@@ -159,12 +195,14 @@ button:hover {
     color: #fff;
     font-size: 20px;
     margin-bottom: 30px;
+    text-align: center;
 }
 
 #final-score {
     font-size: 36px;
     color: #fff;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 #final-rank {
@@ -172,102 +210,191 @@ button:hover {
     color: #00ff88;
     margin-bottom: 20px;
     font-weight: bold;
+    text-align: center;
 }
 
 #guessed-words {
     max-height: 200px;
     overflow-y: auto;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     padding: 15px;
     border-radius: 8px;
     margin-bottom: 20px;
     text-align: left;
-    width: 80%;
+    width: 90%;
     max-width: 400px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .guessed-word {
-    padding: 5px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     color: #fff;
+    font-size: 16px;
+    line-height: 1.4;
 }
 
 .guessed-word:last-child {
     border-bottom: none;
 }
 
-@media (max-width: 768px) and (hover: none) and (pointer: coarse) {
+/* Мобильная версия */
+@media (max-width: 768px) {
     #header {
-        position: relative;
-        padding: 8px 10px;
-    }
-
-    #header .timer-wrapper {
-        position: static;
-        transform: none;
+        padding: 8px 12px;
+        padding-top: max(8px, env(safe-area-inset-top));
+        padding-left: max(12px, env(safe-area-inset-left));
+        padding-right: max(12px, env(safe-area-inset-right));
+        height: 60px;
     }
 
     #header .header-item {
-        font-size: 3vw !important;
+        font-size: 16px !important;
     }
 
     #target-word {
-        font-size: 4vw;
+        font-size: 20px;
+        max-width: 35vw;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     #timer {
-        font-size: 3.5vw;
+        font-size: 18px;
+        min-width: 60px;
     }
 
     #score {
-        font-size: 3.5vw;
+        font-size: 18px;
+    }
+
+    #game-area {
+        top: 60px;
     }
 
     h1 {
-        font-size: 28px;
+        font-size: 32px;
     }
 
     .subtitle {
         font-size: 16px;
-        margin-bottom: 20px;
     }
 
     button {
-        padding: 12px 24px;
-        font-size: 16px;
+        padding: 12px 30px;
+        font-size: 18px;
+        min-width: 180px;
     }
 
     .level-selector {
-        flex-direction: column;
         gap: 8px;
     }
 
     .level-btn {
         padding: 8px 16px;
         font-size: 14px;
+        min-width: 50px;
     }
 
     .word {
         font-size: 18px;
-        padding: 6px 10px;
+        padding: 6px 12px;
+        border-width: 2px;
+        /* Оптимизация для мобильных */
+        -webkit-font-smoothing: antialiased;
+        font-weight: 600;
+    }
+
+    /* Увеличиваем область касания без изменения размера текста */
+    .word::after {
+        content: '';
+        position: absolute;
+        top: -8px;
+        left: -8px;
+        right: -8px;
+        bottom: -8px;
+        background: transparent;
+    }
+
+    .word:active {
+        transform: scale(1.05);
+        opacity: 0.9;
+    }
+
+    button:active {
+        background: #ff6b6b;
+        transform: scale(0.98);
     }
 
     #final-score {
-        font-size: 24px;
+        font-size: 28px;
     }
 
     #final-rank {
-        font-size: 20px;
+        font-size: 22px;
     }
 
     #guessed-words {
         max-height: 150px;
-        width: 90%;
-        padding: 10px;
+        font-size: 14px;
     }
 
-    body {
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
+    .guessed-word {
+        font-size: 14px;
+        padding: 6px 0;
+    }
+
+}
+
+/* Для очень маленьких экранов */
+@media (max-width: 380px) {
+    #header .header-item {
+        font-size: 14px !important;
+    }
+
+    #target-word {
+        font-size: 16px;
+        max-width: 30vw;
+    }
+
+    #timer {
+        font-size: 16px;
+        min-width: 50px;
+    }
+
+    #score {
+        font-size: 16px;
+    }
+
+    .word {
+        font-size: 16px;
+        padding: 5px 10px;
+    }
+
+    .level-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+/* iPad и планшеты */
+@media (min-width: 769px) and (max-width: 1024px) {
+    #header {
+        height: 80px;
+        padding: 15px 20px;
+    }
+
+    #game-area {
+        top: 80px;
+    }
+
+    .word {
+        font-size: 28px;
+        padding: 10px 18px;
+    }
+
+    .word:active {
+        transform: scale(1.1);
     }
 }
