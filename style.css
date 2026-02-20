@@ -1,0 +1,272 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
+    background: #1a1a2e;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+}
+
+#header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #16213e;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+    border-bottom: 2px solid #0f3460;
+    color: #fff;
+}
+
+#header .header-item {
+    color: #fff !important;
+    font-size: 22px;
+}
+
+#header .target-wrapper {
+    /* default - слева через space-between */
+}
+
+#header .timer-wrapper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#header .score-wrapper {
+    /* default */
+}
+
+#target-word {
+    font-size: 28px;
+    color: #00ff88;
+    font-weight: bold;
+}
+
+#score {
+    font-size: 24px;
+    color: #fff;
+}
+
+#timer {
+    font-size: 28px;
+    color: #fff;
+    min-width: 80px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+#timer.visible {
+    opacity: 1;
+}
+
+#start-screen,
+#end-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(26, 26, 46, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+#end-screen {
+    display: none;
+}
+
+h1 {
+    color: #e94560;
+    font-size: 48px;
+    margin-bottom: 20px;
+}
+
+button {
+    background: #e94560;
+    color: #fff;
+    border: none;
+    padding: 15px 40px;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #ff6b6b;
+}
+
+.word {
+    position: absolute;
+    font-size: 32px;
+    font-weight: bold;
+    color: #000;
+    background: #fff;
+    cursor: pointer;
+    user-select: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    transition: transform 0.1s;
+}
+
+.word:hover {
+    transform: scale(1.15);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.target {
+    background: rgba(233, 69, 96, 0.9) !important;
+}
+
+.level-selector {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.level-btn {
+    background: #16213e;
+    border: 2px solid #0f3460;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 8px;
+    color: #fff;
+    transition: all 0.3s;
+}
+
+.level-btn.active {
+    background: #00ff88;
+    color: #000;
+    border-color: #00ff88;
+}
+
+.subtitle {
+    color: #fff;
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+
+#final-score {
+    font-size: 36px;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+#final-rank {
+    font-size: 28px;
+    color: #00ff88;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+#guessed-words {
+    max-height: 200px;
+    overflow-y: auto;
+    background: rgba(255,255,255,0.1);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: left;
+    width: 80%;
+    max-width: 400px;
+}
+
+.guessed-word {
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    color: #fff;
+}
+
+.guessed-word:last-child {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) and (hover: none) and (pointer: coarse) {
+    #header {
+        padding: 8px 10px;
+    }
+
+    #header .header-item {
+        font-size: 14px !important;
+    }
+
+    #target-word {
+        font-size: 18px;
+    }
+
+    #timer {
+        font-size: 16px;
+        min-width: auto;
+    }
+
+    #score {
+        font-size: 16px;
+    }
+
+    #score {
+        font-size: 16px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    button {
+        padding: 12px 24px;
+        font-size: 16px;
+    }
+
+    .level-selector {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .level-btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+
+    .word {
+        font-size: 18px;
+        padding: 6px 10px;
+    }
+
+    #final-score {
+        font-size: 24px;
+    }
+
+    #final-rank {
+        font-size: 20px;
+    }
+
+    #guessed-words {
+        max-height: 150px;
+        width: 90%;
+        padding: 10px;
+    }
+
+    body {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+}

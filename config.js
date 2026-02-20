@@ -13,6 +13,15 @@ const CONFIG = {
     targetFromScreen: true,   // выбирать целевое слово с экрана
     targetFromScreenChance: 1, // шанс выбора целевого слова с экрана
 
+    mobile: {
+        maxWordsOnScreen: 10,
+        wordSpeed: 2.5,
+        wordSpeedVar: 2,
+        spawnInterval: 400,
+        spawnRate: 1,
+        timeBonus: 2000
+    },
+
     // Звания
     ranks: [
         { minScore: 0, title: "Исследователь" },
