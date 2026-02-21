@@ -1,388 +1,399 @@
 <!doctype html>
 <html lang="ru">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>FlyingQuiz</title>
-        <link rel="stylesheet" href="style.css" />
-    </head>
 
-    <body>
-        <div id="header">
-            <div class="header-item target-wrapper">
-                ЛОВИ: <span id="target-word">---</span>
-            </div>
-            <div class="header-item timer-wrapper">
-                <span id="timer">60</span> сек
-            </div>
-            <div class="header-item score-wrapper">
-                Счёт: <span id="score">0</span>
-            </div>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FlyingQuiz</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8GKDVB2HCH"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-8GKDVB2HCH');
+</script>
+
+<body>
+    <div id="header">
+        <div class="header-item target-wrapper">
+            ЛОВИ: <span id="target-word">---</span>
         </div>
-
-        <div id="start-screen">
-            <h1>FlyingQuiz</h1>
-            <div class="subtitle">Изучай языки играя!</div>
-            <div class="level-selector">
-                <button class="level-btn active" data-level="A1">A1</button>
-                <button class="level-btn" data-level="A2">A2</button>
-                <button class="level-btn" data-level="B1">B1</button>
-                <button class="level-btn" data-level="B2">B2</button>
-            </div>
-            <button onclick="startGame()">Играть</button>
+        <div class="header-item timer-wrapper">
+            <span id="timer">60</span> сек
         </div>
-
-        <div id="end-screen">
-            <h1>Игра окончена</h1>
-            <div id="final-score">Ваш счёт: 0</div>
-            <div id="final-rank"></div>
-            <div id="guessed-words"></div>
-            <div class="level-selector">
-                <button class="level-btn active" data-level="A1">A1</button>
-                <button class="level-btn" data-level="A2">A2</button>
-                <button class="level-btn" data-level="B1">B1</button>
-                <button class="level-btn" data-level="B2">B2</button>
-            </div>
-            <button onclick="startGame()">Играть снова</button>
+        <div class="header-item score-wrapper">
+            Счёт: <span id="score">0</span>
         </div>
+    </div>
 
-        <div id="game-area"></div>
+    <div id="start-screen">
+        <h1>FlyingQuiz</h1>
+        <div class="subtitle">Изучай языки играя!</div>
+        <div class="level-selector">
+            <button class="level-btn active" data-level="A1">A1</button>
+            <button class="level-btn" data-level="A2">A2</button>
+            <button class="level-btn" data-level="B1">B1</button>
+            <button class="level-btn" data-level="B2">B2</button>
+        </div>
+        <button onclick="startGame()">Играть</button>
+    </div>
 
-        <script src="dictionary.js"></script>
-        <script src="config.js"></script>
-        <script src="game.js"></script>
-        <script>
-            const isMobile =
-                window.innerWidth < 768 ||
-                'ontouchstart' in window ||
-                navigator.maxTouchPoints > 0;
+    <div id="end-screen">
+        <h1>Игра окончена</h1>
+        <div id="final-score">Ваш счёт: 0</div>
+        <div id="final-rank"></div>
+        <div id="guessed-words"></div>
+        <div class="level-selector">
+            <button class="level-btn active" data-level="A1">A1</button>
+            <button class="level-btn" data-level="A2">A2</button>
+            <button class="level-btn" data-level="B1">B1</button>
+            <button class="level-btn" data-level="B2">B2</button>
+        </div>
+        <button onclick="startGame()">Играть снова</button>
+    </div>
 
-            function getConfig(key) {
-                if (
-                    isMobile &&
-                    CONFIG.mobile &&
-                    CONFIG.mobile.hasOwnProperty(key)
-                ) {
-                    return CONFIG.mobile[key];
-                }
-                return CONFIG[key];
+    <div id="game-area"></div>
+
+    <script src="dictionary.js"></script>
+    <script src="config.js"></script>
+    <script src="game.js"></script>
+    <script>
+        const isMobile =
+            window.innerWidth < 768 ||
+            'ontouchstart' in window ||
+            navigator.maxTouchPoints > 0;
+
+        function getConfig(key) {
+            if (
+                isMobile &&
+                CONFIG.mobile &&
+                CONFIG.mobile.hasOwnProperty(key)
+            ) {
+                return CONFIG.mobile[key];
             }
+            return CONFIG[key];
+        }
 
-            let targetWord = '';
-            let usedTargetWords = new Set();
-            let score = 0;
-            let timeLeft = CONFIG.gameDuration / 1000;
-            let gameInterval = null;
-            let spawnInterval = null;
-            let timerInterval = null;
-            let activeWords = [];
-            let guessedWords = [];
-            let gameReady = false;
+        let targetWord = '';
+        let usedTargetWords = new Set();
+        let score = 0;
+        let timeLeft = CONFIG.gameDuration / 1000;
+        let gameInterval = null;
+        let spawnInterval = null;
+        let timerInterval = null;
+        let activeWords = [];
+        let guessedWords = [];
+        let gameReady = false;
 
-            document.querySelectorAll('.level-btn').forEach((btn) => {
-                btn.addEventListener('click', () => {
-                    document
-                        .querySelectorAll('.level-btn')
-                        .forEach((b) => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    if (typeof setLevel === 'function') {
-                        setLevel(btn.dataset.level);
-                    }
-                });
+        document.querySelectorAll('.level-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                document
+                    .querySelectorAll('.level-btn')
+                    .forEach((b) => b.classList.remove('active'));
+                btn.classList.add('active');
+                if (typeof setLevel === 'function') {
+                    setLevel(btn.dataset.level);
+                }
             });
+        });
 
-            function checkDictionaryReady() {
+        function checkDictionaryReady() {
+            if (
+                typeof DICTIONARY === 'object' &&
+                Object.keys(DICTIONARY).length > 0
+            ) {
+                gameReady = true;
+            } else {
+                setTimeout(checkDictionaryReady, 100);
+            }
+        }
+        checkDictionaryReady();
+
+        function setNewTarget() {
+            let newTarget;
+
+            if (
+                CONFIG.targetFromScreen &&
+                activeWords.length >= 2 &&
+                Math.random() < CONFIG.targetFromScreenChance
+            ) {
+                const randomActiveWord =
+                    activeWords[
+                    Math.floor(Math.random() * activeWords.length)
+                    ];
+                const enWord = randomActiveWord.text;
+                const ruWord = getRuTranslation(enWord);
+                if (ruWord && !usedTargetWords.has(ruWord)) {
+                    newTarget = ruWord;
+                }
+            }
+
+            if (!newTarget) {
+                newTarget = getRandomWord([targetWord, ...usedTargetWords]);
+            }
+
+            usedTargetWords.add(newTarget);
+            targetWord = newTarget;
+            document.getElementById('target-word').textContent = targetWord;
+
+            const delay = Math.random() * 5000;
+            setTimeout(() => {
+                if (activeWords.length < getConfig('maxWordsOnScreen')) {
+                    createWord(true);
+                }
+            }, delay);
+        }
+
+        function createWord(forceTarget = false) {
+            const maxWords = getConfig('maxWordsOnScreen');
+            if (activeWords.length >= maxWords) return;
+
+            const word = document.createElement('div');
+            word.className = 'word';
+
+            let wordEn;
+
+            if (
+                forceTarget ||
+                (targetWord && Math.random() < CONFIG.targetWordChance)
+            ) {
+                wordEn = getEnTranslation(targetWord);
+            } else {
+                wordEn = getRandomEnWord(wordEn);
+            }
+
+            word.textContent = wordEn;
+
+            const fromRight = Math.random() > 0.5;
+            const fromTop = Math.random() > 0.5;
+
+            let startX, startY, endX, endY;
+
+            if (fromRight) {
+                startX = window.innerWidth + 50;
+                endX = -150;
+            } else {
+                startX = -150;
+                endX = window.innerWidth + 50;
+            }
+
+            const verticalSpread = window.innerHeight - 200;
+            startY = 100 + Math.random() * verticalSpread;
+
+            const verticalOffset =
+                (Math.random() - 0.5) * verticalSpread * 0.8;
+            endY = startY + verticalOffset;
+
+            word.style.left = startX + 'px';
+            word.style.top = startY + 'px';
+
+            const angle = Math.atan2(endY - startY, endX - startX);
+            const speedVar =
+                getConfig('wordSpeed') +
+                (Math.random() - 0.5) * getConfig('wordSpeedVar') * 2;
+            const vx = Math.cos(angle) * speedVar;
+            const vy = Math.sin(angle) * speedVar;
+
+            if (isMobile) {
+                word.addEventListener(
+                    'touchstart',
+                    (e) => {
+                        e.preventDefault();
+                        handleWordClick(word);
+                    },
+                    { passive: false }
+                );
+            } else {
+                word.addEventListener('click', () => handleWordClick(word));
+            }
+
+            document.getElementById('game-area').appendChild(word);
+
+            activeWords.push({
+                element: word,
+                x: startX,
+                y: startY,
+                vx: vx,
+                vy: vy,
+                text: word.textContent
+            });
+        }
+
+        function handleWordClick(wordObj) {
+            const wordText = wordObj.textContent;
+            const ruTranslation = getRuTranslation(wordText);
+
+            if (ruTranslation === targetWord) {
+                score += CONFIG.pointsCorrect;
+                timeLeft += getConfig('timeBonus') / 1000;
+                guessedWords.push({ ru: targetWord, en: wordText });
+                setNewTarget();
+            } else {
+                score += CONFIG.pointsWrong;
+            }
+
+            document.getElementById('score').textContent = score;
+            document.getElementById('timer').textContent =
+                Math.floor(timeLeft);
+
+            const idx = activeWords.findIndex((w) => w.element === wordObj);
+            if (idx > -1) {
+                wordObj.remove();
+                activeWords.splice(idx, 1);
+            }
+        }
+
+        function updateWords() {
+            for (let i = activeWords.length - 1; i >= 0; i--) {
+                const w = activeWords[i];
+                w.x += w.vx;
+                w.y += w.vy;
+                w.element.style.left = w.x + 'px';
+                w.element.style.top = w.y + 'px';
+
                 if (
-                    typeof DICTIONARY === 'object' &&
-                    Object.keys(DICTIONARY).length > 0
+                    w.x < -200 ||
+                    w.x > window.innerWidth + 200 ||
+                    w.y < -200 ||
+                    w.y > window.innerHeight + 200
                 ) {
-                    gameReady = true;
-                } else {
-                    setTimeout(checkDictionaryReady, 100);
+                    w.element.remove();
+                    activeWords.splice(i, 1);
                 }
             }
-            checkDictionaryReady();
+        }
 
-            function setNewTarget() {
-                let newTarget;
-
-                if (
-                    CONFIG.targetFromScreen &&
-                    activeWords.length >= 2 &&
-                    Math.random() < CONFIG.targetFromScreenChance
-                ) {
-                    const randomActiveWord =
-                        activeWords[
-                            Math.floor(Math.random() * activeWords.length)
-                        ];
-                    const enWord = randomActiveWord.text;
-                    const ruWord = getRuTranslation(enWord);
-                    if (ruWord && !usedTargetWords.has(ruWord)) {
-                        newTarget = ruWord;
-                    }
-                }
-
-                if (!newTarget) {
-                    newTarget = getRandomWord([targetWord, ...usedTargetWords]);
-                }
-
-                usedTargetWords.add(newTarget);
-                targetWord = newTarget;
-                document.getElementById('target-word').textContent = targetWord;
-
-                const delay = Math.random() * 5000;
-                setTimeout(() => {
-                    if (activeWords.length < getConfig('maxWordsOnScreen')) {
-                        createWord(true);
-                    }
-                }, delay);
+        function startGame() {
+            if (!gameReady || RU_WORDS.length === 0) {
+                alert(
+                    'Загрузка словаря... Попробуйте еще раз через несколько секунд.'
+                );
+                return;
             }
 
-            function createWord(forceTarget = false) {
-                const maxWords = getConfig('maxWordsOnScreen');
-                if (activeWords.length >= maxWords) return;
+            document.getElementById('start-screen').style.display = 'none';
+            document.getElementById('end-screen').style.display = 'none';
+            document.getElementById('timer').classList.add('visible');
 
-                const word = document.createElement('div');
-                word.className = 'word';
+            score = 0;
+            usedTargetWords = new Set();
+            guessedWords = [];
+            timeLeft = CONFIG.gameDuration / 1000;
+            document.getElementById('score').textContent = score;
+            document.getElementById('timer').textContent = timeLeft;
 
-                let wordEn;
+            activeWords.forEach((w) => w.element.remove());
+            activeWords = [];
 
-                if (
-                    forceTarget ||
-                    (targetWord && Math.random() < CONFIG.targetWordChance)
-                ) {
-                    wordEn = getEnTranslation(targetWord);
-                } else {
-                    wordEn = getRandomEnWord(wordEn);
-                }
+            setNewTarget();
 
-                word.textContent = wordEn;
-
-                const fromRight = Math.random() > 0.5;
-                const fromTop = Math.random() > 0.5;
-
-                let startX, startY, endX, endY;
-
-                if (fromRight) {
-                    startX = window.innerWidth + 50;
-                    endX = -150;
-                } else {
-                    startX = -150;
-                    endX = window.innerWidth + 50;
-                }
-
-                const verticalSpread = window.innerHeight - 200;
-                startY = 100 + Math.random() * verticalSpread;
-
-                const verticalOffset =
-                    (Math.random() - 0.5) * verticalSpread * 0.8;
-                endY = startY + verticalOffset;
-
-                word.style.left = startX + 'px';
-                word.style.top = startY + 'px';
-
-                const angle = Math.atan2(endY - startY, endX - startX);
-                const speedVar =
-                    getConfig('wordSpeed') +
-                    (Math.random() - 0.5) * getConfig('wordSpeedVar') * 2;
-                const vx = Math.cos(angle) * speedVar;
-                const vy = Math.sin(angle) * speedVar;
-
-                if (isMobile) {
-                    word.addEventListener(
-                        'touchstart',
-                        (e) => {
-                            e.preventDefault();
-                            handleWordClick(word);
-                        },
-                        { passive: false }
-                    );
-                } else {
-                    word.addEventListener('click', () => handleWordClick(word));
-                }
-
-                document.getElementById('game-area').appendChild(word);
-
-                activeWords.push({
-                    element: word,
-                    x: startX,
-                    y: startY,
-                    vx: vx,
-                    vy: vy,
-                    text: word.textContent
-                });
-            }
-
-            function handleWordClick(wordObj) {
-                const wordText = wordObj.textContent;
-                const ruTranslation = getRuTranslation(wordText);
-
-                if (ruTranslation === targetWord) {
-                    score += CONFIG.pointsCorrect;
-                    timeLeft += getConfig('timeBonus') / 1000;
-                    guessedWords.push({ ru: targetWord, en: wordText });
-                    setNewTarget();
-                } else {
-                    score += CONFIG.pointsWrong;
-                }
-
-                document.getElementById('score').textContent = score;
-                document.getElementById('timer').textContent =
-                    Math.floor(timeLeft);
-
-                const idx = activeWords.findIndex((w) => w.element === wordObj);
-                if (idx > -1) {
-                    wordObj.remove();
-                    activeWords.splice(idx, 1);
-                }
-            }
-
-            function updateWords() {
-                for (let i = activeWords.length - 1; i >= 0; i--) {
-                    const w = activeWords[i];
-                    w.x += w.vx;
-                    w.y += w.vy;
-                    w.element.style.left = w.x + 'px';
-                    w.element.style.top = w.y + 'px';
-
-                    if (
-                        w.x < -200 ||
-                        w.x > window.innerWidth + 200 ||
-                        w.y < -200 ||
-                        w.y > window.innerHeight + 200
-                    ) {
-                        w.element.remove();
-                        activeWords.splice(i, 1);
-                    }
-                }
-            }
-
-            function startGame() {
-                if (!gameReady || RU_WORDS.length === 0) {
-                    alert(
-                        'Загрузка словаря... Попробуйте еще раз через несколько секунд.'
-                    );
-                    return;
-                }
-
-                document.getElementById('start-screen').style.display = 'none';
-                document.getElementById('end-screen').style.display = 'none';
-                document.getElementById('timer').classList.add('visible');
-
-                score = 0;
-                usedTargetWords = new Set();
-                guessedWords = [];
-                timeLeft = CONFIG.gameDuration / 1000;
-                document.getElementById('score').textContent = score;
+            gameInterval = setInterval(updateWords, 16);
+            const spawnInt = getConfig('spawnInterval');
+            const spawnR = getConfig('spawnRate') || CONFIG.spawnRate;
+            spawnInterval = setInterval(createWord, spawnInt / spawnR);
+            timerInterval = setInterval(() => {
+                timeLeft--;
                 document.getElementById('timer').textContent = timeLeft;
 
-                activeWords.forEach((w) => w.element.remove());
-                activeWords = [];
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
 
-                setNewTarget();
+            for (let i = 0; i < 2; i++) {
+                createWord();
+            }
+        }
 
-                gameInterval = setInterval(updateWords, 16);
-                const spawnInt = getConfig('spawnInterval');
-                const spawnR = getConfig('spawnRate') || CONFIG.spawnRate;
-                spawnInterval = setInterval(createWord, spawnInt / spawnR);
-                timerInterval = setInterval(() => {
-                    timeLeft--;
-                    document.getElementById('timer').textContent = timeLeft;
+        function endGame() {
+            clearInterval(gameInterval);
+            clearInterval(spawnInterval);
+            clearInterval(timerInterval);
 
-                    if (timeLeft <= 0) {
-                        endGame();
-                    }
-                }, 1000);
+            activeWords.forEach((w) => w.element.remove());
+            activeWords = [];
 
-                for (let i = 0; i < 2; i++) {
-                    createWord();
+            // Calculate rank
+            let rank = CONFIG.ranks[0].title;
+            for (let i = CONFIG.ranks.length - 1; i >= 0; i--) {
+                if (score >= CONFIG.ranks[i].minScore) {
+                    rank = CONFIG.ranks[i].title;
+                    break;
                 }
             }
 
-            function endGame() {
-                clearInterval(gameInterval);
-                clearInterval(spawnInterval);
-                clearInterval(timerInterval);
+            document.getElementById('timer').classList.remove('visible');
+            document.getElementById('final-score').textContent =
+                'Ваш счёт: ' + score;
+            document.getElementById('final-rank').textContent =
+                'Звание: ' + rank;
 
-                activeWords.forEach((w) => w.element.remove());
-                activeWords = [];
+            // Show guessed words
+            const guessedWordsDiv =
+                document.getElementById('guessed-words');
+            if (guessedWords.length > 0) {
+                guessedWordsDiv.innerHTML = guessedWords
+                    .map(
+                        (w) =>
+                            '<div class="guessed-word">' +
+                            w.en +
+                            ' — ' +
+                            w.ru +
+                            '</div>'
+                    )
+                    .join('');
+            } else {
+                guessedWordsDiv.innerHTML =
+                    '<div class="guessed-word">Вы не отгадали ни одного слова</div>';
+            }
 
-                // Calculate rank
-                let rank = CONFIG.ranks[0].title;
-                for (let i = CONFIG.ranks.length - 1; i >= 0; i--) {
-                    if (score >= CONFIG.ranks[i].minScore) {
-                        rank = CONFIG.ranks[i].title;
-                        break;
-                    }
-                }
-
-                document.getElementById('timer').classList.remove('visible');
-                document.getElementById('final-score').textContent =
-                    'Ваш счёт: ' + score;
-                document.getElementById('final-rank').textContent =
-                    'Звание: ' + rank;
-
-                // Show guessed words
-                const guessedWordsDiv =
-                    document.getElementById('guessed-words');
-                if (guessedWords.length > 0) {
-                    guessedWordsDiv.innerHTML = guessedWords
-                        .map(
-                            (w) =>
-                                '<div class="guessed-word">' +
-                                w.en +
-                                ' — ' +
-                                w.ru +
-                                '</div>'
-                        )
-                        .join('');
+            document.getElementById('end-screen').style.display = 'flex';
+        }
+    </script>
+    <script>
+        // Предотвращаем скролл и zoom на мобильных
+        document.addEventListener(
+            'touchmove',
+            (e) => {
+                if (
+                    e.target.classList.contains('word') ||
+                    e.target.closest('.word')
+                ) {
+                    // Разрешаем только касания слов
                 } else {
-                    guessedWordsDiv.innerHTML =
-                        '<div class="guessed-word">Вы не отгадали ни одного слова</div>';
+                    e.preventDefault();
                 }
+            },
+            { passive: false }
+        );
 
-                document.getElementById('end-screen').style.display = 'flex';
+        document.addEventListener('gesturestart', (e) => {
+            e.preventDefault();
+        });
+
+        // Фиксируем высоту вьюпорта
+        function setVH() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+            // Обновляем позиции слов при изменении размера
+            if (typeof window.updateWordPositions === 'function') {
+                window.updateWordPositions();
             }
-        </script>
-        <script>
-            // Предотвращаем скролл и zoom на мобильных
-            document.addEventListener(
-                'touchmove',
-                (e) => {
-                    if (
-                        e.target.classList.contains('word') ||
-                        e.target.closest('.word')
-                    ) {
-                        // Разрешаем только касания слов
-                    } else {
-                        e.preventDefault();
-                    }
-                },
-                { passive: false }
-            );
+        }
 
-            document.addEventListener('gesturestart', (e) => {
-                e.preventDefault();
-            });
+        window.addEventListener('resize', setVH);
+        window.addEventListener('orientationchange', setVH);
+        setVH();
 
-            // Фиксируем высоту вьюпорта
-            function setVH() {
-                const vh = window.innerHeight * 0.01;
-                document.documentElement.style.setProperty('--vh', `${vh}px`);
+        // Блокируем скролл body
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+    </script>
+</body>
 
-                // Обновляем позиции слов при изменении размера
-                if (typeof window.updateWordPositions === 'function') {
-                    window.updateWordPositions();
-                }
-            }
-
-            window.addEventListener('resize', setVH);
-            window.addEventListener('orientationchange', setVH);
-            setVH();
-
-            // Блокируем скролл body
-            document.body.style.overflow = 'hidden';
-            document.documentElement.style.overflow = 'hidden';
-        </script>
-    </body>
 </html>
